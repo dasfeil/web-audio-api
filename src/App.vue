@@ -25,11 +25,22 @@ import { watchEffect } from "vue";
 import { AudioType } from "./interfaces/audio";
 let destination = [0, 0, 0];
 let audioSrc: Array<AudioType> = [
-  { src: "/clang_sfx.mp3", point: [1, 1, 0] },
-  { src: "/huh_sfx.mp3", point: [1, 1, 1] },
+  { src: "/clang_sfx.mp3", point: [0, 0, -2] },
+  { src: "/huh_sfx.mp3", point: [0, 0, 0] },
 ];
 let adMap: Map<string, any> = new Map();
 const audioContext = new window.AudioContext();
+const listener = audioContext.listener
+listener.positionX.value = 0;
+listener.positionY.value = 0;
+listener.positionZ.value = 0;
+listener.forwardX.value = 0;
+listener.forwardY.value = 1;
+listener.forwardZ.value = 0;
+listener.upX.value = 0;
+listener.upY.value = 0;
+listener.upZ.value = 1;
+
 audioSrc.forEach((element) => {
   const audioElement = new Audio(element.src);
   const track = audioContext.createMediaElementSource(audioElement);
@@ -40,8 +51,12 @@ audioSrc.forEach((element) => {
       element.point[0],
       audioContext.currentTime
     );
-    pannerNode.positionZ.setValueAtTime(
+    pannerNode.positionY.setValueAtTime(
       element.point[1],
+      audioContext.currentTime
+    );
+    pannerNode.positionZ.setValueAtTime(
+      element.point[2],
       audioContext.currentTime
     );
   });

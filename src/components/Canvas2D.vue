@@ -24,7 +24,7 @@ const justifyPosition = (
   o.position
     .copy(new THREE.Vector3(position[0], position[2], position[1]))
     .divideScalar(0.08)
-    .floor()
+    .round()
     .multiplyScalar(0.08);
 };
 
@@ -45,7 +45,7 @@ const gridHelper = new THREE.GridHelper(2, 25, 0x000000, 0x000000);
 gridHelper.rotation.x = Math.PI / 2;
 camera.position.z = 3;
 gridHelper.position.z = 2;
-plane.position.z = 0;
+plane.position.z = -10;
 
 const audioDestination = new THREE.Mesh(geometry.clone(), material.clone());
 justifyPosition(audioDestination, props.destination);
@@ -98,12 +98,7 @@ onMounted(() => {
   });
 
   controls.addEventListener("drag", (event) => {
-    let raycaster = controls.getRaycaster();
-    let intersect = raycaster.intersectObject(plane);
-    if (intersect[0]) {
-      event.object.position.divideScalar(0.08).addScalar(0.04).floor().multiplyScalar(0.08);
-    }
-    console.log(raycaster.ray.origin.divideScalar(0.08).addScalar(0.04).floor().multiplyScalar(0.08))
+    event.object.position.divideScalar(0.08).round().clampScalar(-12, 12).multiplyScalar(0.08)
     render();
   });
 
