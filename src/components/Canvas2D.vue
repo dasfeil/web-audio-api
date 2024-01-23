@@ -101,9 +101,9 @@ onMounted(() => {
     let raycaster = controls.getRaycaster();
     let intersect = raycaster.intersectObject(plane);
     if (intersect[0]) {
-      event.object.position.divideScalar(0.08).floor().multiplyScalar(0.08);
+      event.object.position.divideScalar(0.08).addScalar(0.04).floor().multiplyScalar(0.08);
     }
-    console.log(raycaster.ray.origin.divideScalar(0.008).floor().multiplyScalar(0.008))
+    console.log(raycaster.ray.origin.divideScalar(0.08).addScalar(0.04).floor().multiplyScalar(0.08))
     render();
   });
 
