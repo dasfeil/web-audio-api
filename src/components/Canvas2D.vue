@@ -7,6 +7,11 @@ import * as THREE from "three";
 import { onMounted, ref } from "vue";
 import { DragControls } from "three/examples/jsm/Addons.js";
 
+defineProps({
+  destination: Array<number>,
+  audioSrc: Array<object>,
+});
+
 const canvas = ref<HTMLCanvasElement | null>(null);
 const scene = new THREE.Scene();
 const camera = new THREE.OrthographicCamera();
@@ -30,7 +35,7 @@ audioDestination.position
   .copy(new THREE.Vector3(0, 0, 1))
   .divideScalar(0.08)
   .floor()
-  .multiplyScalar(0.08)
+  .multiplyScalar(0.08);
 
 scene.add(audioDestination, gridHelper, plane);
 
@@ -75,10 +80,7 @@ onMounted(() => {
     let raycaster = controls.getRaycaster();
     let intersect = raycaster.intersectObject(plane);
     if (intersect[0]) {
-      event.object.position
-        .divideScalar(0.08)
-        .floor()
-        .multiplyScalar(0.08)
+      event.object.position.divideScalar(0.08).floor().multiplyScalar(0.08);
     }
     render();
   });
