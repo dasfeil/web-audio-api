@@ -6,11 +6,27 @@
 import * as THREE from "three";
 import { onMounted, ref } from "vue";
 import { DragControls } from "three/examples/jsm/Addons.js";
+import { AudioType } from "../interfaces/audio";
 
-defineProps({
-  destination: Array<number>,
-  audioSrc: Array<object>,
-});
+const props = defineProps<{
+  destination: Array<number>;
+  audioSrc: Array<AudioType>;
+}>();
+
+const justifyPosition = (
+  o: THREE.Mesh<
+    THREE.BoxGeometry,
+    THREE.MeshBasicMaterial,
+    THREE.Object3DEventMap
+  >,
+  position: (number | undefined)[]
+) => {
+  o.position
+    .copy(new THREE.Vector3(position[0], position[2], position[1]))
+    .divideScalar(0.08)
+    .floor()
+    .multiplyScalar(0.08);
+};
 
 const canvas = ref<HTMLCanvasElement | null>(null);
 const scene = new THREE.Scene();
@@ -25,22 +41,27 @@ const material = new THREE.MeshBasicMaterial({
   color: 0x00ff00,
   transparent: true,
 });
-const audioDestination = new THREE.Mesh(geometry.clone(), material.clone());
 const gridHelper = new THREE.GridHelper(2, 25, 0x000000, 0x000000);
 gridHelper.rotation.x = Math.PI / 2;
 camera.position.z = 3;
 gridHelper.position.z = 2;
 plane.position.z = 0;
-audioDestination.position
-  .copy(new THREE.Vector3(0, 0, 1))
-  .divideScalar(0.08)
-  .floor()
-  .multiplyScalar(0.08);
+
+const audioDestination = new THREE.Mesh(geometry.clone(), material.clone());
+justifyPosition(audioDestination, props.destination);
 
 scene.add(audioDestination, gridHelper, plane);
 
 let objects: THREE.Object3D[] = [];
 objects.push(audioDestination);
+
+props.audioSrc.forEach((element) => {
+  let tempNode = new THREE.Mesh(geometry.clone(), material.clone());
+  justifyPosition(tempNode, element.point);
+  tempNode.name = element.src;
+  objects.push(tempNode);
+  scene.add(tempNode);
+});
 
 onMounted(() => {
   const renderer = new THREE.WebGLRenderer({ canvas: canvas.value! });
@@ -82,6 +103,7 @@ onMounted(() => {
     if (intersect[0]) {
       event.object.position.divideScalar(0.08).floor().multiplyScalar(0.08);
     }
+    console.log(raycaster.ray.origin.divideScalar(0.008).floor().multiplyScalar(0.008))
     render();
   });
 
