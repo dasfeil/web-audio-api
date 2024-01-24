@@ -5,11 +5,15 @@
         <p>Current Position:</p>
         <div class="ml-5">
           <p>
-            Audio Destination: [{{ destination[0]/0.08 + ", " + destination[2]/0.08 }}]
+            Audio Destination: [{{
+              destination[0] / 0.08 + ", " + destination[2] / 0.08
+            }}]
           </p>
           <div v-for="(src, index) in audioSrc">
             <p>
-              Source {{ index + 1 }}: [{{ src.point[0]/0.08 + ", " + src.point[2]/0.08 }}]
+              Source {{ index + 1 }}: [{{
+                src.point[0] / 0.08 + ", " + src.point[2] / 0.08
+              }}]
             </p>
           </div>
         </div>
@@ -19,7 +23,12 @@
         :audio-src="audioSrc"
         @dragged="modifySource"
       />
-      <button class="text-black rounded-md bg-[#ffffff] w-16 p-1 self-center mt-2" @click="startAudio">Test</button>
+      <button
+        class="text-black rounded-md bg-[#ffffff] w-16 p-1 self-center mt-2"
+        @click="startAudio"
+      >
+        Test
+      </button>
     </div>
   </div>
 </template>
@@ -34,16 +43,18 @@ let audioSrc = ref([
 ]);
 let adMap: Map<string, any> = new Map();
 const audioContext = new window.AudioContext();
-const listener = audioContext.listener;
-listener.positionX.value = destination.value[0];
-listener.positionY.value = destination.value[1];
-listener.positionZ.value = destination.value[2];
-listener.forwardX.value = 0;
-listener.forwardY.value = 1;
-listener.forwardZ.value = 0;
-listener.upX.value = 0;
-listener.upY.value = 0;
-listener.upZ.value = 1;
+watchEffect(() => {
+  const listener = audioContext.listener;
+  listener.positionX.value = destination.value[0];
+  listener.positionY.value = destination.value[1];
+  listener.positionZ.value = destination.value[2];
+  listener.forwardX.value = 0;
+  listener.forwardY.value = 1;
+  listener.forwardZ.value = 0;
+  listener.upX.value = 0;
+  listener.upY.value = 0;
+  listener.upZ.value = 1;
+});
 
 function modifySource(name: string, coord: THREE.Vector3) {
   if (!name) {
@@ -63,7 +74,8 @@ function startAudio() {
   }
 
   adMap.forEach((element: HTMLMediaElement) => {
-    element.play()
+    element.loop = true;
+    element.play();
   });
 }
 
