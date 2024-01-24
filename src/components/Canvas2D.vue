@@ -62,6 +62,7 @@ props.audioSrc.forEach((element) => {
   objects.push(tempNode);
   scene.add(tempNode);
 });
+const emit = defineEmits(['dragged'])
 
 onMounted(() => {
   const renderer = new THREE.WebGLRenderer({ canvas: canvas.value! });
@@ -109,6 +110,7 @@ onMounted(() => {
       scene.remove(tempNode);
       tempNode = undefined;
     }
+    emit('dragged', event.object.name, event.object.position)
     render();
   });
 });
